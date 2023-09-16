@@ -896,10 +896,11 @@ const compileSchema = (schema, root, opts, scope, basePathRoot = '') => {
 
         const suberr = suberror()
         iterate((prop, evaluate) => {
-          const sub = subruleSub(suberr, prop, node.contains, subPath('contains'))
+          const ev = getMeta().containsEvaluates
+          const { sub } = subruleImpl(!ev, suberr, prop, node.contains, subPath('contains'))
           fun.if(sub, () => {
             fun.write('%s++', passes)
-            if (getMeta().containsEvaluates) {
+            if (ev) {
               enforce(!removeAdditional, 'Can\'t use removeAdditional with draft2020+ "contains"')
               evaluate()
             }
